@@ -10,7 +10,9 @@ function handle_http(sck, payload)
 end
 
 function hextorgb(hex_str)
-  return tonumber("0x"..hex_str:sub(1,2)), tonumber("0x"..hex_str:sub(3,4)), tonumber("0x"..hex_str:sub(5,6))
+  return tonumber("0x"..hex_str:sub(1,2)) or 0,
+         tonumber("0x"..hex_str:sub(3,4)) or 0,
+         tonumber("0x"..hex_str:sub(5,6)) or 0
 end
 
 function handle_udp(sck, data)
@@ -20,7 +22,7 @@ function handle_udp(sck, data)
   local i = 0
   for tok in data:gmatch("%w+") do
     -- todo check first token
-  
+
     if(i == 1) then
       local r,g,b = hextorgb(tok)
       buffer:fill(r, g, b)
