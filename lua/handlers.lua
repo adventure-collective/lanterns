@@ -15,7 +15,7 @@ function hextorgb(hex)
          tonumber(hex:sub(5,6), 16) or 0
 end
 
-function handle_udp(sck, data)
+function handle_udp(sck, data, ip, port)
 
   print(string.format("received '%s' from %s:%d", data, ip, port))
 
