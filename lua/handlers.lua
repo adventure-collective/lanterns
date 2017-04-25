@@ -1,5 +1,8 @@
-ws2812.init()
-local buffer = ws2812.newBuffer(16, 3)
+if(ws2812 ~= nil) then
+  print("init ws2812")
+  ws2812.init()
+  local buffer = ws2812.newBuffer(16, 3)
+end
 
 function handle_http(sck, payload)
   print(payload)
