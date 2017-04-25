@@ -1,6 +1,7 @@
 -- requires busted
 -- busted lua_test/test.lua
 
+dofile('lua_test/stubs.lua')
 dofile('lua/handlers.lua')
 
 describe("hex to rbg", function()
@@ -44,6 +45,21 @@ describe("hex to rbg", function()
     assert.are.same(g, 0)
     assert.are.same(b, 0)
 
+  end)
+
+end)
+
+
+describe("message handling", function()
+
+  it("should handle FILL messages", function()
+    spy.on(buffer, "fill")
+
+    handle_udp(nil, "FILL ff00cc", '', 0)
+    assert.spy(buffer.fill).was_called_with(buffer,255,0,204)
+
+    handle_udp(nil, "FILL 000000", '', 0)
+    assert.spy(buffer.fill).was_called_with(buffer,0,0,0)
   end)
 
 end)
