@@ -1,8 +1,8 @@
-if(ws2812 ~= nil) then
+--if(ws2812 ~= nil) then
   print("init ws2812")
   ws2812.init()
   local buffer = ws2812.newBuffer(16, 3)
-end
+--end
 
 function handle_http(sck, payload)
   print(payload)
@@ -17,7 +17,7 @@ end
 
 function handle_udp(sck, data, ip, port)
 
-  print(string.format("received '%s' from %s:%d", data, ip, port))
+--  print(string.format("received '%s' from %s:%d", data, ip, port))
 
   local i = 0
   for tok in data:gmatch("%w+") do
