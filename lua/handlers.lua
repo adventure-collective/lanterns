@@ -19,18 +19,43 @@ function handle_udp(sck, data, ip, port)
 
 --  print(string.format("received '%s' from %s:%d", data, ip, port))
 
+  local mode = nil
+
   local i = 0
   for tok in data:gmatch("%w+") do
     -- todo check first token
+    if(i == 0) then
+      if(tok == 'FILL') then
+        mode = 'FILL'
+      end
 
-    if(i == 1) then
-      local r,g,b = hextorgb(tok)
-      buffer:fill(r, g, b)
-      ws2812.write(buffer)
+      if(tok == 'SET') then
+        mode = 'SET'
+      end
+    end
+
+    if(i > 0) then
+      if(mode == 'FILL') then
+        local r,g,b = hextorgb(tok)
+        buffer:fill(r, g, b)
+        print(string.format("filling:  %d, %d, %d", r, g, b))
+        --ws2812.write(buffer)
+      end
+
+      if(mode == 'SET') then
+        local r,g,b = hextorgb(tok)
+
+--        print(i)
+--        print(r, g, b)
+        buffer:set(i, r, g, b)
+      end
+
     end
 
     i = i + 1
   end
+
+  ws2812.write(buffer)
 
 end
 
