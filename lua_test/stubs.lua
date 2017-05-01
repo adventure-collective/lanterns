@@ -18,3 +18,7 @@ end
 buffer.fill = function(_buff,r,g,b)
   -- print (string.format("buffer:fill %d, %d, %d", r, g, b))
 end
+
+buffer.set = function(_buff,r,g,b)
+  -- print (string.format("buffer:set %d, %d, %d", r, g, b))
+end
