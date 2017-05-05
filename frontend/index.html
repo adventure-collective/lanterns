@@ -10,31 +10,175 @@
 	</head>
 	<body>
 		<script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
     <script>
+
+      // todo from .json
+
+      var N = 16
+
+      var lantern_map = []
+
+      for (var i = 0; i < N; i++) {
+        lantern_map.push({
+          x: Math.sin((i/N) * Math.PI * 2),
+          y: .8,
+          z: -Math.sin(((i/N) * Math.PI * 2) - Math.PI/2),
+          r: 0.1,
+
+          pixels: [
+            i+1
+          ]
+          //
+          // pixels: [
+          //   'f1', 5,
+          //   'f1', 6,
+          //   'f1', 7,
+          // ]
+        })
+      }
+
+      console.log(lantern_map)
+
+
+
+
+
+
 			var scene = new THREE.Scene()
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 )
 
 			var renderer = new THREE.WebGLRenderer()
 			renderer.setSize( window.innerWidth, window.innerHeight )
+      renderer.setClearColor(0xeeeeee)
 			document.body.appendChild( renderer.domElement )
+      //
+			// var geometry = new THREE.BoxGeometry( 1, 1, 1 )
+			// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
+			// var cube = new THREE.Mesh( geometry, material )
+			// scene.add( cube )
 
-			var geometry = new THREE.BoxGeometry( 1, 1, 1 )
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
-			var cube = new THREE.Mesh( geometry, material )
-			scene.add( cube )
+
+      // var lanterns = Array.from({length: 16, (_,i) => {
+      //
+      // }})
+
+      const lanterns = lantern_map.map(d => {
+
+        var geometry = new THREE.SphereGeometry( 0.1, 0.1, 0.1 )
+        // var material = new THREE.MeshBasicMaterial( { color: 0xffffff * Math.random() } )
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
+        var lantern = new THREE.Mesh( geometry, material )
+        lantern.position.x = d.x
+        lantern.position.y = d.y
+        lantern.position.z = d.z
+        scene.add( lantern )
+
+        lantern.data = d
+
+        return lantern
+
+      })
 
 			camera.position.z = 5
 
 			var render = function () {
 				requestAnimationFrame( render )
 
-				cube.rotation.x += 0.1
-				cube.rotation.y += 0.1
+				// cube.rotation.x += 0.01
+				// cube.rotation.y += 0.01
 
 				renderer.render(scene, camera)
 			}
 
 			render()
+
+      function colorToStr(c) {
+        // return String.fromCharCode(
+        //   Math.floor(50+(c.r*50)),
+        //   Math.floor(50+(c.g*50)),
+        //   Math.floor(50+(c.b*50)))
+
+        // String.fromCharCode()
+        return String.fromCharCode(~~(c.r*10)) + String.fromCharCode(~~(c.g*10)) + String.fromCharCode(~~(c.b*10))
+      }
+
+
+      var payload = lanterns
+      // String.fromCharCode(66)
+        // .map(l => l.material.color.getHex().toString(16))
+
+        .map(l => {
+          var c = l.material.color//.getHex().toString(16)
+
+          return String.fromCharCode(
+            Math.floor(50+(c.r*50)),
+            Math.floor(50+(c.g*50)),
+            Math.floor(50+(c.b*50)))
+
+          return String.fromCharCode(50, 50, 121)
+
+
+
+          console.log(c)
+          return String.fromCharCode(~~(c.r*255)) + String.fromCharCode(~~(c.g*255)) + String.fromCharCode(~~(c.b*255))
+        })
+
+
+
+      fetch('http://localhost:3000/data', {
+        method: 'POST',
+        body: payload.join(' ')
+      })
+
+      var lastl = 0
+      document.body.addEventListener('mousemove', (e) => {
+        var l = Math.floor((e.clientY/500) * N)
+        console.log(l)
+
+        if(l !== lastl) {
+          lastl = l
+
+          lanterns
+            .forEach((l, i) => {
+
+              l.material.color.set((i < lastl) ? 0xffcc00 : 0x000000)
+
+            })
+
+
+          // var payload = lanterns
+            // .map(l => l.material.color.getHex().toString(16))
+
+            var payload = lanterns
+            // String.fromCharCode(66)
+              // .map(l => l.material.color.getHex().toString(16))
+
+              .map(l => {
+                var c = l.material.color//.getHex().toString(16)
+
+                return colorToStr(c)
+
+                // console.log(c)
+                // return String.fromCharCode(~~(c.r*50)) + String.fromCharCode(~~(c.g*50)) + String.fromCharCode(~~(c.b*50))
+              })
+          //
+          fetch('http://localhost:3000/data', {
+            method: 'POST',
+            body: payload.join('')
+          })
+        }
+      })
+
+
+
+      controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+      // controls.addEventListener( 'change', render ); // remove when using animation loop
+				// enable animation loop when using damping or autorotation
+				//controls.enableDamping = true;
+				//controls.dampingFactor = 0.25;
+				controls.enableZoom = false;
 		</script>
 	</body>
 </html>
