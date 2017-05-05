@@ -1,8 +1,6 @@
---if(ws2812 ~= nil) then
-  print("init ws2812")
-  ws2812.init()
-  local buffer = ws2812.newBuffer(16, 3)
---end
+-- I guess this creates a new buffer each time handlers are evaluated
+ws2812.init()
+local buffer = ws2812.newBuffer(100, 3)
 
 function handle_http(sck, payload)
   print(payload)
@@ -17,13 +15,18 @@ end
 
 function handle_udp(sck, data, ip, port)
 
---  print(string.format("received '%s' from %s:%d", data, ip, port))
+
+  if(data:sub(0,4) == 'SET ') then
+    buffer:set(1, data:sub(5))
+    ws2812.write(buffer)
+    return
+  end
 
   local mode = nil
 
   local i = 0
   for tok in data:gmatch("%w+") do
-    -- todo check first token
+
     if(i == 0) then
       if(tok == 'FILL') then
         mode = 'FILL'
@@ -38,16 +41,10 @@ function handle_udp(sck, data, ip, port)
       if(mode == 'FILL') then
         local r,g,b = hextorgb(tok)
         buffer:fill(r, g, b)
-        print(string.format("filling:  %d, %d, %d", r, g, b))
-        --ws2812.write(buffer)
       end
 
       if(mode == 'SET') then
-        local r,g,b = hextorgb(tok)
-
---        print(i)
---        print(r, g, b)
-        buffer:set(i, r, g, b)
+        buffer:set(i, tok)
       end
 
     end
