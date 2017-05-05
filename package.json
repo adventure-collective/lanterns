@@ -1,0 +1,12 @@
+{
+  "name": "lanterns",
+  "version": "1.0.0",
+  "main": "lib/server.js",
+  "repository": "git@github.com:adventure-collective/lanterns.git",
+  "author": "Ben Foxall <benfoxall@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
+  }
+}
