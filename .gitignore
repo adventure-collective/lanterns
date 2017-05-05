@@ -2,3 +2,5 @@
 node_modules
 
 hardware/esptool
+
+network.json
