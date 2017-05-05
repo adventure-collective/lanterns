@@ -15,44 +15,18 @@ end
 
 function handle_udp(sck, data, ip, port)
 
-
   if(data:sub(0,4) == 'SET ') then
     buffer:set(1, data:sub(5))
     ws2812.write(buffer)
     return
   end
 
-  local mode = nil
-
-  local i = 0
-  for tok in data:gmatch("%w+") do
-
-    if(i == 0) then
-      if(tok == 'FILL') then
-        mode = 'FILL'
-      end
-
-      if(tok == 'SET') then
-        mode = 'SET'
-      end
-    end
-
-    if(i > 0) then
-      if(mode == 'FILL') then
-        local r,g,b = hextorgb(tok)
-        buffer:fill(r, g, b)
-      end
-
-      if(mode == 'SET') then
-        buffer:set(i, tok)
-      end
-
-    end
-
-    i = i + 1
+  if(data:sub(0,5) == 'FILL ') then
+    local r,g,b = hextorgb(data:sub(6))
+    buffer:fill(r, g, b)
+    ws2812.write(buffer)
+    return
   end
-
-  ws2812.write(buffer)
 
 end
 
