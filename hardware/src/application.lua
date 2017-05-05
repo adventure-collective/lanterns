@@ -22,4 +22,13 @@ port, ip = udpSocket:getaddr()
 print(string.format("local UDP socket address / port: %s:%d", ip, port))
 
 
+
+-- broadcast the bunch id every 15s
+tmr.create():alarm(15000, tmr.ALARM_AUTO, function()
+
+  print(string.format("Broadcasting (BUNCH=%s)",  BUNCH_ID))
+  udpSocket:send(5053, wifi.sta.getbroadcast(), 'BUNCH=' .. BUNCH_ID)
+
+end)
+
 dofile("handlers.lua")
