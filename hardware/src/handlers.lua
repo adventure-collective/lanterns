@@ -7,12 +7,6 @@ function handle_http(sck, payload)
   sck:send("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello from nodeMCU</h1>")
 end
 
-function hextorgb(hex)
-  return tonumber(hex:sub(1,2), 16) or 0,
-         tonumber(hex:sub(3,4), 16) or 0,
-         tonumber(hex:sub(5,6), 16) or 0
-end
-
 function handle_udp(sck, data, ip, port)
 
   if(data:sub(0,4) == 'SET ') then
