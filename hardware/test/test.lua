@@ -66,11 +66,10 @@ describe("message handling", function()
   it("should handle SET messages", function()
     spy.on(buffer, "set")
 
-    handle_udp(nil, "SET ffffff 000000 ffffff cccccc", '', 0)
-    assert.spy(buffer.set).was_called_with(buffer,1,255,255,255)
-    assert.spy(buffer.set).was_called_with(buffer,2,0,0,0)
-    assert.spy(buffer.set).was_called_with(buffer,3,255,255,255)
-    assert.spy(buffer.set).was_called_with(buffer,3,204,204,204)
+    local data = string.char(255,255,255, 0,0,0, 255,255,255, 204,204,204)
+
+    handle_udp(nil, "SET " .. data, '', 0)
+    assert.spy(buffer.set).was_called_with(buffer,1,data)
 
   end)
 
