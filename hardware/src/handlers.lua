@@ -1,6 +1,6 @@
 -- I guess this creates a new buffer each time handlers are evaluated
 ws2812.init()
-local buffer = ws2812.newBuffer(100, 3)
+local buffer = ws2812.newBuffer(NUM_PIXELS, 3)
 
 function handle_http(sck, payload)
   print(payload)
