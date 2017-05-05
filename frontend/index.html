@@ -11,6 +11,7 @@
 	<body>
 		<script src="three.min.js"></script>
     <script src="OrbitControls.js"></script>
+		<script src="ReconnectingWebSocket.js"></script>
     <script>
 
       // todo from .json
@@ -40,6 +41,19 @@
 
       console.log(lantern_map)
 
+
+			const socket = new ReconnectingWebSocket(`ws://${location.host}`)
+
+			const send = (data) => {
+				if(socket.readyState == WebSocket.OPEN) {
+					socket.send(data)
+				} else {
+					fetch('/send', {
+		        method: 'POST',
+		        body: data
+		      })
+				}
+			}
 
 
 			const colorStr = (color) =>
@@ -91,10 +105,7 @@
         .map(l => colorStr(l.material.color))
 
 
-      fetch('/data', {
-        method: 'POST',
-        body: payload.join('')
-      })
+			send(payload.join(''))
 
       var lastl = 0
       document.body.addEventListener('mousemove', (e) => {
@@ -118,11 +129,9 @@
             var payload = lanterns
               .map(l => colorStr(l.material.color))
 
-          //
-          fetch('/data', {
-            method: 'POST',
-            body: payload.join('')
-          })
+
+					send(payload.join(''))
+
         }
       })
 
