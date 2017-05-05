@@ -15,4 +15,5 @@ install:
 
 script:
   # TODO: - luacheck --no-unused-args --std max+busted lua
-  - busted --verbose lua_test/test.lua
+  - cd hardware
+  - busted --verbose test/test.lua

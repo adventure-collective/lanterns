@@ -1,8 +1,8 @@
 -- requires busted
 -- busted lua_test/test.lua
 
-dofile('lua_test/stubs.lua')
-dofile('lua/handlers.lua')
+dofile('test/stubs.lua')
+dofile('src/handlers.lua')
 
 describe("hex to rbg", function()
 
