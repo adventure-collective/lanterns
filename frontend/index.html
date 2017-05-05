@@ -126,7 +126,7 @@
 
 
 
-      fetch('http://localhost:3000/data', {
+      fetch('/data', {
         method: 'POST',
         body: payload.join(' ')
       })
@@ -163,7 +163,7 @@
                 // return String.fromCharCode(~~(c.r*50)) + String.fromCharCode(~~(c.g*50)) + String.fromCharCode(~~(c.b*50))
               })
           //
-          fetch('http://localhost:3000/data', {
+          fetch('/data', {
             method: 'POST',
             body: payload.join('')
           })
