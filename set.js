@@ -12,18 +12,13 @@ console.log(`Using bunch:${bunch_id} (${bunch.address}:${bunch.port})`)
 const dgram = require('dgram')
 const client = dgram.createSocket('udp4')
 
-const hex = (r,g,b) =>
-  ("0" + parseInt(r,10).toString(16)).slice(-2) +
-  ("0" + parseInt(g,10).toString(16)).slice(-2) +
-  ("0" + parseInt(b,10).toString(16)).slice(-2)
-
 const inter = setInterval(() => {
 
   const now = Date.now()
 
   var colours = Array.from({length: N})
     .map((v, i ) => {
-      const colour = hex(
+      const colour = String.fromCharCode(
         (Math.sin(((now + (i * 80))/100) + 0) + 1) * brightness,
         (Math.sin(((now + (i * 80))/100) + 2) + 1) * brightness,
         (Math.sin(((now + (i * 80))/100) + 4) + 1) * brightness
@@ -34,7 +29,6 @@ const inter = setInterval(() => {
     })
 
 
-  client.send(Buffer.from(`SET ${colours.join(' ')}`), bunch.port, bunch.address);
+  client.send(Buffer.from(`SET ${colours.join('')}`), bunch.port, bunch.address);
 
-  console.log(`SET ${colours.join(' ')}`)
 }, 50)
