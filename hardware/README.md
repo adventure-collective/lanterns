@@ -1,5 +1,7 @@
 # Flashing nodeMCU firmware
 
+(See [here](https://github.com/nodemcu/nodemcu-devkit/wiki/Getting-Started-on-OSX) or [here](https://nodemcu.readthedocs.io/en/master/en/flash/) for more in depth guides.)
+
 1. downloaded/install [usb to uart drivers](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers)
 
 2. install esptool
