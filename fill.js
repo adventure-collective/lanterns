@@ -7,27 +7,19 @@ const bunch = network[bunch_id]
 
 console.log(`Using bunch:${bunch_id} (${bunch.address}:${bunch.port})`)
 
-
 const dgram = require('dgram')
 const client = dgram.createSocket('udp4')
-
-const hex = (r,g,b) =>
-  ("0" + parseInt(r,10).toString(16)).slice(-2) +
-  ("0" + parseInt(g,10).toString(16)).slice(-2) +
-  ("0" + parseInt(b,10).toString(16)).slice(-2)
 
 const inter = setInterval(() => {
 
   const now = Date.now()
 
-  const colour = hex(
+  const colour = String.fromCharCode(
     (Math.sin((now/100) + 0) + 1) * brightness,
     (Math.sin((now/100) + 2) + 1) * brightness,
     (Math.sin((now/100) + 4) + 1) * brightness
   )
 
   client.send(Buffer.from(`FILL ${colour}`), bunch.port, bunch.address)
-
-  console.log(colour)
 
 }, 10)

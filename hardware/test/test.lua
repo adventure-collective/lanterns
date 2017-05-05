@@ -55,10 +55,10 @@ describe("message handling", function()
   it("should handle FILL messages", function()
     spy.on(buffer, "fill")
 
-    handle_udp(nil, "FILL ff00cc", '', 0)
+    handle_udp(nil, "FILL " .. string.char(255,0,204), '', 0)
     assert.spy(buffer.fill).was_called_with(buffer,255,0,204)
 
-    handle_udp(nil, "FILL 000000", '', 0)
+    handle_udp(nil, "FILL " .. string.char(0,0,0), '', 0)
     assert.spy(buffer.fill).was_called_with(buffer,0,0,0)
   end)
 

@@ -22,13 +22,10 @@ function handle_udp(sck, data, ip, port)
   end
 
   if(data:sub(0,5) == 'FILL ') then
-    local r,g,b = hextorgb(data:sub(6))
-    buffer:fill(r, g, b)
+    local r,g,b = data:byte(6,9)
+    buffer:fill(r,g,b)
     ws2812.write(buffer)
     return
   end
 
 end
-
-
--- handle_udp(nil, "FILL ffcc00")
