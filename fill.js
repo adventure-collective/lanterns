@@ -1,9 +1,14 @@
+const brightness = 10 // 0 -> 127
+
+// use the first bunch listed in network.json
+const network = require('./network.json')
+const bunch_id = Object.keys(network)[0]
+const bunch = network[bunch_id]
+
+console.log(`Using bunch:${bunch_id} (${bunch.address}:${bunch.port})`)
+
+
 const dgram = require('dgram')
-
-const address = '192.168.11.112'
-const brightness = 127 // 0 -> 127
-
-
 const client = dgram.createSocket('udp4')
 
 const hex = (r,g,b) =>
@@ -21,7 +26,7 @@ const inter = setInterval(() => {
     (Math.sin((now/100) + 4) + 1) * brightness
   )
 
-  client.send(Buffer.from(`FILL ${colour}`), 5000, address);
+  client.send(Buffer.from(`FILL ${colour}`), bunch.port, bunch.address)
 
   console.log(colour)
 
