@@ -39,25 +39,27 @@ if(typeof module != 'undefined') module.exports = Lanterns
 
 
 function interpolate(arr, prop) {
-
-  // interpolate positions
-  var last = 0
-  var next = 0
+  var prior = 0
   for (var i = 0; i < arr.length; i++) {
-    if(typeof(arr[i][prop]) == 'undefined') {
-      for(var j = i; j < arr.length; j++) {
-        if(typeof(arr[j][prop]) != 'undefined') {
-          next = arr[j][prop]
-          break
-        }
-      }
-      for (var k = i; k < j; k++) {
-        const off = (k - i + 1) / (j - i + 1)
-        arr[k][prop] = last + (next - last) * off
+    if(typeof(arr[i][prop]) != 'undefined') {
+      prior = arr[i][prop]
+      continue
+    }
+
+    // look for the next good value
+    var next = 0
+    for(var j = i; j < arr.length; j++) {
+      if(typeof(arr[j][prop]) != 'undefined') {
+        next = arr[j][prop]
+        break
       }
     }
 
-    last = arr[i][prop]
+    // fill in the blanks
+    for (var k = i; k < j; k++) {
+      const off = (k - i + 1) / (j - i + 1)
+      arr[k][prop] = prior + (next - prior) * off
+    }
   }
 
 }
