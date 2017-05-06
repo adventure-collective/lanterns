@@ -17,7 +17,7 @@
   "scripts": {
     "discover": "node ./lib/discover.js",
     "start": "node ./lib/server.js",
-    "test-frontend": "buble ./frontend/test.js > ./frontend/test-es5.js; node ./frontend/test-es5.js; rm ./frontend/test-es5.js",
+    "test-frontend": "node ./frontend/test.js",
     "test": "npm run test-frontend"
   }
 }

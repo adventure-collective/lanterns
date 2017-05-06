@@ -16,6 +16,11 @@ install:
 script:
   # TODO: - luacheck --no-unused-args --std max+busted lua
   - npm install
+
+  # hack - support older node versions
+  - buble ./frontend/Lantern.js > ./frontend/Lantern.js
+  - buble ./frontend/test.js > ./frontend/test.js
+
   - npm test
   - cd hardware
   - busted --verbose test/test.lua
