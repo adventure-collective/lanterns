@@ -2,16 +2,16 @@ class Lanterns {
   constructor (config) {
     this.config = config
 
-
     // generate the raw lights
     this._raw = []
 
     Object.keys(config)
       .forEach(key => {
+        let n = 0
         config[key]
           .forEach(item => {
             for (var i = 0; i < (item.count || 1); i++) {
-              this._raw.push(item)
+              this._raw.push(Object.assign({}, item, {$: [key, n++]}))
             }
           })
       })
@@ -42,8 +42,6 @@ class Lanterns {
         }
       }
     }
-
-
   }
 
   raw() {
