@@ -22,26 +22,10 @@ class Lanterns {
     })
 
     // interpolate positions
-    var last = {x: 0, y: 0, z: 0}
-    var next = {x: 0, y: 0, z: 0}
-    for (var i = 0; i < this._raw.length; i++) {
-      if(typeof(this._raw[i].x) == 'undefined') {
-        for(var j = i; j < this._raw.length; j++) {
-          if(typeof(this._raw[j].x) != 'undefined') {
-            next.x = this._raw[j].x
-            next.y = this._raw[j].y
-            next.z = this._raw[j].z
-            break
-          }
-        }
-        for (var k = i; k < j; k++) {
-          const off = (k - i + 1) / (j - i + 1)
-          this._raw[k].x = last.x + (next.x - last.x) * off
-          this._raw[k].y = last.y + (next.y - last.y) * off
-          this._raw[k].z = last.z + (next.z - last.z) * off
-        }
-      }
-    }
+    interpolate(this._raw, 'x')
+    interpolate(this._raw, 'y')
+    interpolate(this._raw, 'z')
+
   }
 
   raw() {
@@ -52,3 +36,28 @@ class Lanterns {
 
 
 if(typeof module != 'undefined') module.exports = Lanterns
+
+
+function interpolate(arr, prop) {
+
+  // interpolate positions
+  var last = 0
+  var next = 0
+  for (var i = 0; i < arr.length; i++) {
+    if(typeof(arr[i][prop]) == 'undefined') {
+      for(var j = i; j < arr.length; j++) {
+        if(typeof(arr[j][prop]) != 'undefined') {
+          next = arr[j][prop]
+          break
+        }
+      }
+      for (var k = i; k < j; k++) {
+        const off = (k - i + 1) / (j - i + 1)
+        arr[k][prop] = last + (next - last) * off
+      }
+    }
+
+    last = arr[i][prop]
+  }
+
+}
