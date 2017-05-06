@@ -28,6 +28,20 @@ class Lanterns {
     interpolate(this._raw, 'y')
     interpolate(this._raw, 'z')
 
+
+    this._data = new Uint8ClampedArray(this._raw.length * 3)
+
+    // data separated by bunch for sending
+    this._datas = []
+
+    // create linked sub arrays in better form for writing
+    let from = 0
+    this._indices.forEach(([key, to]) => {
+      this._datas.push([key, this._data.subarray(from, to * 3)])
+      from = to * 3
+    })
+
+
   }
 
   raw() {
@@ -42,18 +56,16 @@ class Lanterns {
   }
 
   writeArray(array) {
-    this._writes = []
+    for (var i = 0; i < array.length; i++) {
+      this._data[i*3]     = array[i].r
+      this._data[i*3 + 1] = array[i].g
+      this._data[i*3 + 2] = array[i].b
+    }
 
-    let from = 0
-    this._indices.forEach(([key, i]) => {
-
-      const rgb = array.slice(from, i).map(
-        v => String.fromCharCode(v.r, v.g, v.b)
+    this._writes =
+      this._datas.map(([key, array]) =>
+        key + ' ' + String.fromCharCode.apply(String, array)
       )
-      this._writes.push(key + ' ' + rgb.join(''))
-
-      from = i
-    })
   }
 
 }
