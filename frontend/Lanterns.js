@@ -66,6 +66,9 @@ class Lanterns {
       this._datas.map(([key, array]) =>
         key + ' ' + String.fromCharCode.apply(String, array)
       )
+
+    if(this._send) this._send()
+
   }
 
 
@@ -94,6 +97,52 @@ class Lanterns {
       this._datas.map(([key, array]) =>
         key + ' ' + String.fromCharCode.apply(String, array)
       )
+
+    if(this._send) this._send()
+
+  }
+
+
+
+  // untestedish
+
+  connect(host = location.host) {
+    if(this._socket) return console.error("Already connected")
+
+    this._socket = new ReconnectingWebSocket(`ws://${host}`)
+
+    const throttle = 20
+
+    let _scheduled, _last = 0
+
+    this._send = () => {
+      if(_scheduled) return
+
+      const now = window.performance.now()
+      if(now - _last < throttle) {
+        console.log("rescheduling because throttling")
+        // too soon
+        _scheduled = true
+        setTimeout(() => {
+          _scheduled = false
+          this._send()
+        }, Math.max(throttle - now - last, 0))
+      }
+
+      if(socket.readyState == WebSocket.OPEN) {
+        this._datas.forEach(([key, array]) =>
+          socket.send(key + ' ' + String.fromCharCode.apply(String, array))
+        )
+      } else {
+        console.log("rescheduling because network")
+        _scheduled = true
+
+        setTimeout(() => {
+          _scheduled = false
+          this._send()
+        }, 500)
+      }
+    }
   }
 
 }
