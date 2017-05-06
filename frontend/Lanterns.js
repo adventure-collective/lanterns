@@ -68,6 +68,34 @@ class Lanterns {
       )
   }
 
+
+  asTHREE() {
+    return this._raw.map(light => {
+      const {x,y,z} = light
+
+      const geometry = new THREE.SphereGeometry( 0.1, 10, 10 )
+      const material = new THREE.MeshBasicMaterial( { color: 0 } )
+      const lantern = new THREE.Mesh( geometry, material )
+
+      Object.assign(lantern.position, {x,y,z})
+
+      return lantern
+    })
+  }
+
+  writeTHREE(meshes) {
+    for (var i = 0; i < meshes.length; i++) {
+      this._data[i*3]     = meshes[i].material.color.r * 255
+      this._data[i*3 + 1] = meshes[i].material.color.g * 255
+      this._data[i*3 + 2] = meshes[i].material.color.b * 255
+    }
+
+    this._writes =
+      this._datas.map(([key, array]) =>
+        key + ' ' + String.fromCharCode.apply(String, array)
+      )
+  }
+
 }
 
 

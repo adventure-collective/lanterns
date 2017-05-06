@@ -146,3 +146,47 @@ test('array write', t => {
   ])
 
 })
+
+
+
+test('THREE', t => {
+
+  t.plan(4)
+
+  // Stub out THREE.js
+  function Geometry() {}
+  function Material() {
+    this.color = {}
+  }
+  function Mesh(geometry, material) {
+    this.position = {}
+    this.material = material
+    this.geometry = geometry
+  }
+  THREE = {
+    SphereGeometry: Geometry,
+    MeshBasicMaterial: Material,
+    Mesh: Mesh
+  }
+
+  const lanterns = new Lanterns({
+    AA: [ {x: 50, y: 100, z: 2000} ]
+  })
+
+  const meshes = lanterns.asTHREE()
+
+  t.assert(meshes[0] instanceof Mesh, "returns a THREE.js mesh object")
+  t.deepEqual(meshes[0].position, {x: 50, y: 100, z: 2000}, "mesh has appropriate position")
+
+  Object.assign(meshes[0].material.color, {r: 0.5, g: 1, b: 0.2})
+
+  lanterns.writeTHREE(meshes)
+
+  t.deepEqual(lanterns._data, [128, 255, 51], "mech colours are written to data")
+
+
+  t.deepEqual(lanterns._writes,[
+    'AA '+String.fromCharCode(128, 255, 51)
+  ], 'works end to end')
+
+})
