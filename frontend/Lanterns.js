@@ -1,21 +1,25 @@
 
 class Lanterns {
   constructor (config) {
-    console.log("constructed")
+    this.config = config
 
+
+    // generate the raw lights
+    this._raw = []
+
+    Object.keys(config)
+      .forEach(key => {
+        config[key]
+          .forEach(item => {
+            this._raw.push(item)
+          })
+      })
   }
 
   raw() {
-    return [0,1,2,{x: 3}]
+    return this._raw
   }
 
-  asArray() {
-
-  }
-
-  setArray(array) {
-
-  }
 }
 
 
