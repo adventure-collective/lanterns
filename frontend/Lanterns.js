@@ -5,8 +5,8 @@ class Lanterns {
     // generate the raw lights
     this._raw = []
 
-    Object.keys(config)
-      .forEach(key => {
+    this._indices = Object.keys(config)
+      .map(key => {
         let n = 0
         config[key]
           .forEach(item => {
@@ -14,6 +14,8 @@ class Lanterns {
               this._raw.push(Object.assign({}, item, {$: [key, n++]}))
             }
           })
+
+        return [key, this._raw.length]
       })
 
     // clean up
@@ -30,6 +32,28 @@ class Lanterns {
 
   raw() {
     return this._raw
+  }
+
+  asArray() {
+    return this._raw.map(light => {
+      const {x,y,z} = light
+      return {x,y,z}
+    })
+  }
+
+  writeArray(array) {
+    this._writes = []
+
+    let from = 0
+    this._indices.forEach(([key, i]) => {
+
+      const rgb = array.slice(from, i).map(
+        v => String.fromCharCode(v.r, v.g, v.b)
+      )
+      this._writes.push(key + ' ' + rgb.join(''))
+
+      from = i
+    })
   }
 
 }

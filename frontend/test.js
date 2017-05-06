@@ -102,3 +102,47 @@ test('Interpolation', t => {
   ])
 
 })
+
+
+
+test('array access', t => {
+  t.plan(1)
+
+  const lanterns = new Lanterns({
+    AA: [ {x: 0, y: 0, z: 0} ]
+  })
+
+  const array = lanterns.asArray()
+
+  t.deepEqual(array, [
+    {x: 0, y: 0, z: 0}
+  ])
+
+})
+
+
+test('array write', t => {
+  t.plan(1)
+
+  const lanterns = new Lanterns({
+    AA: [
+      {x: 0, y: 0, z: 0},
+      {x: 0, y: 0, z: 0},
+    ],
+    BB: [
+      {x: 0, y: 0, z: 0},
+    ]
+  })
+
+  lanterns.writeArray([
+    {r: 150, g: 120, b: 110},
+    {r: 200, g: 220, b: 210},
+    {r: 10, g: 20, b: 30},
+  ])
+
+  t.deepEqual(lanterns._writes,[
+    'AA '+String.fromCharCode(150,120,110, 200,220,210),
+    'BB '+String.fromCharCode(10,20,30)
+  ])
+
+})
