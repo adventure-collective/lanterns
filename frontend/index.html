@@ -73,7 +73,7 @@
 
       var last_l = 0
       document.body.addEventListener('mousemove', (e) => {
-        var l = Math.floor((e.clientY/400) * N)
+        var l = Math.floor((e.clientY/400) * meshes.length)
 
         if(l !== last_l) {
 					last_l = l
@@ -81,7 +81,7 @@
           meshes
             .forEach((lantern, i) => {
 							if(l > i) {
-								lantern.material.color.setHSL((i-l)/N,.750,.50)
+								lantern.material.color.setHSL((i-l)/meshes.length,.750,.50)
 							} else {
 								lantern.material.color.set(0)
 							}

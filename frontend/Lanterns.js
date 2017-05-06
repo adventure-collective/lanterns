@@ -109,27 +109,39 @@ class Lanterns {
   connect(host = location.host) {
     if(this._socket) return console.error("Already connected")
 
-    this._socket = new ReconnectingWebSocket(`ws://${host}`)
+    const socket = this._socket = new ReconnectingWebSocket(`ws://${host}`)
 
-    const throttle = 20
+    const throttle = 50
 
-    let _scheduled, _last = 0
+    let _scheduled, _last
 
     this._send = () => {
       if(_scheduled) return
 
       const now = window.performance.now()
-      if(now - _last < throttle) {
+
+      const time_passed = now - _last
+
+      if(time_passed < throttle) {
         console.log("rescheduling because throttling")
-        // too soon
+
+        const when = Math.max(throttle - (now - _last) + 5, 0)
+
+        console.log(`Time passed: ${time_passed}, shduling in: ${when}`)
+
         _scheduled = true
         setTimeout(() => {
+          console.log("unscheduled")
           _scheduled = false
           this._send()
-        }, Math.max(throttle - now - last, 0))
+        }, when)
+
+        return
       }
 
       if(socket.readyState == WebSocket.OPEN) {
+        console.log("SEND")
+        _last = now
         this._datas.forEach(([key, array]) =>
           socket.send(key + ' ' + String.fromCharCode.apply(String, array))
         )
