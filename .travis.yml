@@ -12,10 +12,10 @@ before_install:
 install:
   # TODO: - luarocks install luacheck
   - luarocks install busted
-  - npm install
 
 script:
   # TODO: - luacheck --no-unused-args --std max+busted lua
+  - npm install
   - cd hardware
   - busted --verbose test/test.lua
   - npm test
