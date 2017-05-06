@@ -11,9 +11,15 @@ class Lanterns {
       .forEach(key => {
         config[key]
           .forEach(item => {
-            this._raw.push(item)
+            for (var i = 0; i < (item.count || 1); i++) {
+              this._raw.push(item)
+            }
           })
       })
+
+    this._raw.forEach(item => {
+      delete item.count
+    })
   }
 
   raw() {
