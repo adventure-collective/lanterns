@@ -33,6 +33,25 @@ test('Raw access', t => {
 })
 
 
+
+test('Default to 0, 0, 0', t => {
+  t.plan(1)
+
+  const lanterns = new Lanterns({
+    AA: [ {}, {} ]
+  })
+
+  const raw = lanterns.raw()
+
+  t.deepEqual(raw, [
+    {x: 0, y: 0, z: 0, $:['AA', 0]},
+    {x: 0, y: 0, z: 0, $:['AA', 1]}
+  ])
+
+})
+
+
+
 test('Count', t => {
   t.plan(1)
 
