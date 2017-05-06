@@ -16,6 +16,6 @@ install:
 script:
   # TODO: - luacheck --no-unused-args --std max+busted lua
   - npm install
+  - npm test
   - cd hardware
   - busted --verbose test/test.lua
-  - npm test
