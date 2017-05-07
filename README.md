@@ -48,7 +48,7 @@ For two sets of lights that are running alongside each other one in front of, an
 
 There are some shortcuts that can be used:
 
-### grouping multiple lights
+#### grouping multiple lights
 
 Multiple lights (eg, ones in the same lantern) can be duplicated with the `count` property
 
@@ -69,7 +69,7 @@ Multiple lights (eg, ones in the same lantern) can be duplicated with the `count
 ]
 ```
 
-### interpolating positions
+### interpolating positions
 
 If the x,y,z properties are omitted, they will be interpolated between other points.
 
