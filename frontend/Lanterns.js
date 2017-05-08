@@ -142,9 +142,9 @@ class Lanterns {
       if(socket.readyState == WebSocket.OPEN) {
         console.log("SEND")
         _last = now
-        this._datas.forEach(([key, array]) =>
-          socket.send(key + ' ' + String.fromCharCode.apply(String, array))
-        )
+        this._datas.forEach(([key, array]) => {
+          socket.send(`${key} ${array.join(',')}`)
+        })
       } else {
         console.log("rescheduling because network")
         _scheduled = true
