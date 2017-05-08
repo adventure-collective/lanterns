@@ -118,16 +118,16 @@ class Lanterns {
     this._send = () => {
       if(_scheduled) return
 
-      const now = window.performance.now()
+      const now = ~~window.performance.now()
 
       const time_passed = now - _last
 
       if(time_passed < throttle) {
         console.log("rescheduling because throttling")
 
-        const when = Math.max(throttle - (now - _last) + 5, 0)
+        const when = Math.max(throttle - time_passed + 5, 0)
 
-        console.log(`Time passed: ${time_passed}, shduling in: ${when}`)
+        console.log(`Time passed: ${time_passed}ms, rescheduling in: ${when}ms`)
 
         _scheduled = true
         setTimeout(() => {
