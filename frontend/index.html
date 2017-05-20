@@ -42,7 +42,9 @@
 			    //   { "x": -0.383, "y": 0.8, "z": 0.924 }
 			    // ],
 					"AA": Array(98).fill({}),
-					"STICK": Array(50).fill({})
+					"STICK": Array(50).fill({}),
+					"JANE": Array(50).fill({})
+
 			}
 
 			layout.AA[0] = {x:-2, y:-1};
@@ -60,6 +62,8 @@
 			layout.STICK[0] = layout.STICK[49] = {x:3,y:2,z:0};
 			layout.STICK[25] = {z: 5};
 
+			layout.JANE[0] = layout.JANE[49] = {x:3.5,y:2,z:0};
+			layout.JANE[25] = {z: 5};
 
 
 			const lanterns = new Lanterns(layout)
