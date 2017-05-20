@@ -4,7 +4,7 @@ local buffer = ws2812.newBuffer(NUM_PIXELS, 3)
 
 function handle_http(sck, payload)
   print(payload)
-  sck:send("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello from nodeMCU</h1>")
+  sck:send("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n<h1>Hello from [" .. BUNCH_ID .. "]</h1>")
 end
 
 function handle_udp(sck, data, ip, port)
