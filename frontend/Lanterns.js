@@ -5,6 +5,24 @@ class Lanterns {
     // generate the raw lights
     this._raw = []
 
+    // allow sparse led-keyed assignments
+    Object.keys(config)
+      .forEach(key => {
+        config[key] = config[key].reduce((memo, item, i) => {
+          if(isFinite(item.led)) {
+            memo[item.led] = item
+            delete item.led
+          } else {
+            memo[i] = item
+          }
+          return memo
+        }, [])
+
+        for (var i = 0; i < config[key].length; i++)
+          if(!config[key][i]) config[key][i] = {}
+      })
+
+
     this._indices = Object.keys(config)
       .map(key => {
         let n = 0

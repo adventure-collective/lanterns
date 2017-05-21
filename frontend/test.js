@@ -103,7 +103,28 @@ test('Interpolation', t => {
 
 })
 
+test('Indexed', t => {
+  t.plan(1)
 
+  const lanterns = new Lanterns({
+    AA: [
+      {led: 0, x: 0, y: 0, z: 0},
+      {led: 3, x: 3, y: 3, z: 3},
+      {led: 5, x: 5, y: 5, z: 5},
+    ]
+  })
+
+  const raw = lanterns.raw()
+
+  t.deepEqual(raw, [
+    {x: 0, y: 0, z: 0, $:['AA', 0]},
+    {x: 1, y: 1, z: 1, $:['AA', 1]},
+    {x: 2, y: 2, z: 2, $:['AA', 2]},
+    {x: 3, y: 3, z: 3, $:['AA', 3]},
+    {x: 4, y: 4, z: 4, $:['AA', 4]},
+    {x: 5, y: 5, z: 5, $:['AA', 5]}
+  ])
+})
 
 test('array access', t => {
   t.plan(1)
