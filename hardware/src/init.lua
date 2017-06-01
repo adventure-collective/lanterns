@@ -1,4 +1,22 @@
-dofile("config.lua")
+-- Check if pins 0 & 1 are shorted, if so enter setup mode
+
+gpio.mode(0, gpio.OUTPUT)
+gpio.mode(1, gpio.INPUT)
+
+gpio.write(0, gpio.HIGH)
+local high = gpio.read(1)
+
+gpio.write(0, gpio.LOW)
+local low = gpio.read(1)
+
+gpio.mode(0, gpio.INPUT)
+
+local initFile = 'init.normal.lua'
+
+if (high == 1 and low == 0) then
+  print 'D0 & D1 connected - SETUP mode'
+  initFile = 'init.setup.lua'
+end
 
 function startup()
    if file.open("init.lua") == nil then
@@ -6,23 +24,9 @@ function startup()
    else
       print("Running")
       file.close("init.lua")
-      -- the actual application is stored in 'application.lua'
-      dofile("application.lua")
+      dofile(initFile)
    end
 end
 
-print("Connecting to WiFi access point...")
-wifi.setmode(wifi.STATION)
-wifi.sta.config(SSID, PASSWORD)
--- wifi.sta.connect() not necessary because config() uses auto-connect=true by default
-tmr.create():alarm(1000, tmr.ALARM_AUTO, function(cb_timer)
-    if wifi.sta.getip() == nil then
-        print("Waiting for IP address...")
-    else
-        cb_timer:unregister()
-        print("WiFi connection established, IP address: " .. wifi.sta.getip())
-        print("You have 1 second to abort")
-        print("Waiting...")
-        tmr.create():alarm(1000, tmr.ALARM_SINGLE, startup)
-    end
-end)
+print("loading " .. initFile .. " in 3 seconds")
+tmr.create():alarm(3000, tmr.ALARM_SINGLE, startup)
