@@ -1,7 +1,8 @@
--- Network information
-SSID = ""
-PASSWORD = ""
+-- Default configuration
+-- (this file will be overwritten by config step)
 
--- todo NUM_PIXELS, ID
-BUNCH_ID = "AA"
-NUM_PIXELS = 16
+SSID = "SSID"
+PASSWORD = "PASSWORD"
+
+BUNCH_ID = "BUNCH_ID"
+NUM_PIXELS = 50
