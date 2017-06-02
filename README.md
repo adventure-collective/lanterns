@@ -99,9 +99,9 @@ This can be combined with `count` for making it easier to enter long/straight li
 
 1. Connect pins D0 + D1
 2. Power on
-3. Connect to wifi hotspot 'bunch-setup-XYZAB'
-4. Visit http://192.168.4.1
-5. Us the UI to configure the lights
+3. Connect to wifi hotspot 'bunch-setup-XYZAB' - password is `password`
+4. Visit http://192.168.4.1 in your browser
+5. Use the UI to configure the lights
 6. Power off
 7. Disconnect pins D0 + D1
 8. Power on
