@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pixel Runner</title>
+    <style media="screen">
+      body {
+        font-family: sans-serif;
+        margin: 0;
+      }
+      form {
+        display: flex;
+        font-weight: 800;
+        padding: .75em;
+        border-bottom: 1px solid #ccc;
+      }
+      form label {
+        flex: auto
+      }
+      form em {
+        font-size: 0.5em;
+        display: block;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      iframe {
+        flex-grow: 1;
+        border: none;
+        background: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <label>
+        script
+        <select>
+          <option>--</option>
+          <option value="index.html">demo 1</option>
+        </select>
+      </label>
+
+      <label>
+        layout
+        <select>
+          <option>--</option>
+          <option value="hackspace-1.json">hackspace 1</option>
+          <option value="ben.json">bens house</option>
+        </select>
+      </label>
+
+      <label>
+        development
+        <input type="checkbox" checked/>
+        <em>prevent broadcast to lights</em>
+      </label>
+    </form>
+
+    <iframe src="about:blank" id="main"></iframe>
+
+
+  </body>
+</html>
