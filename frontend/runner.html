@@ -39,7 +39,7 @@
     <form>
       <label>
         script
-        <select>
+        <select name="script">
           <option>--</option>
           <option value="index.html">demo 1</option>
         </select>
@@ -47,7 +47,7 @@
 
       <label>
         layout
-        <select>
+        <select name="layout">
           <option>--</option>
           <option value="hackspace-1.json">hackspace 1</option>
           <option value="ben.json">bens house</option>
@@ -56,13 +56,46 @@
 
       <label>
         development
-        <input type="checkbox" checked/>
+        <input type="checkbox" checked name="development"/>
         <em>prevent broadcast to lights</em>
       </label>
     </form>
 
     <iframe src="about:blank" id="main"></iframe>
 
+    <script type="text/javascript">
+      const qsa = document.querySelectorAll.bind(document)
+      const qs = document.querySelectorAll.bind(document)
+
+      const storage = sessionStorage
+
+      // persist values on load
+      Array.from(qsa('select'))
+        .forEach( input => {
+          const store_key = `select-${input.name}`
+
+          const initial = storage.getItem(store_key)
+          if(initial !== null) input.value = initial
+
+          input.addEventListener('change', () => {
+            storage.setItem(store_key, input.value)
+          }, false)
+        })
+
+      Array.from(qsa('[type=checkbox]'))
+        .forEach( input => {
+          const store_key = `checkbox-${input.name}`
+
+          const initial = storage.getItem(store_key)
+          if(initial !== null) input.checked = initial == 'true'
+
+          input.addEventListener('change', () => {
+            storage.setItem(store_key, input.checked)
+          }, false)
+        })
+
+
+    </script>
 
   </body>
 </html>
