@@ -1,129 +1,139 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset=utf-8>
-		<title>Lanterns frontend</title>
-		<style>
-			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
-		</style>
-	</head>
-	<body>
-		<script src="three.min.js"></script>
-    <script src="OrbitControls.js"></script>
-		<script src="ReconnectingWebSocket.js"></script>
-		<script src="Lanterns.js"></script>
-    <script>
-			const layout = {
-			  // "AA":
-					// [
-					// 	{x: 0}
-					// ]
-					//
-			    // [
-			    //   { "x": 0.000,  "y": 0.8, "z": 1 },
-			    //   { "x": 0.383,  "y": 0.8, "z": 0.924 },
-					// 	{},{},{},{},{},{},{},{},{},{},{},{},
-			    //   { "x": 0.707,  "y": 0.8, "z": 0.707 },
-			    //   { "x": 0.924,  "y": 0.8, "z": 0.383 },
-			    //   { "x": 1.000,  "y": 0.8, "z": 0 },
-			    //   { "x": 0.924,  "y": 0.8, "z": -0.383 },
-			    //   { "x": 0.707,  "y": 0.8, "z": -0.707 },
-					// 	{},{},{},{},{},{},{},{},{},{},{},{},
-			    //   { "x": 0.383,  "y": 0.8, "z": -0.924 },
-			    //   { "x": 0.000,  "y": 0.8, "z": -1 },
-			    //   { "x": -0.383, "y": 0.8, "z": -0.924 },
-			    //   { "x": -0.707, "y": 0.8, "z": -0.707 },
-			    //   { "x": -0.924, "y": 0.8, "z": -0.383 },
-			    //   { "x": -1.000, "y": 0.8, "z": 0 },
-					// 	{},{},{},{},{},{},{},{},{},{},{},{},
-			    //   { "x": -0.924, "y": 0.8, "z": 0.383 },
-			    //   { "x": -0.707, "y": 0.8, "z": 0.707 },
-			    //   { "x": -0.383, "y": 0.8, "z": 0.924 }
-			    // ],
-					AA: [
-						{led: 0,   x:-2,  y:-1},
-						{led: 22,  x:2,   y:-1},
-						{led: 33,  x:2,   y:1},
-						{led: 52,  x:-2,  y:1},
-						{led: 56,  x:-2,  y:0.5},
-						{led: 73,  x:1.5, y:0.5},
-						{led: 78,  x:1.5, y:-0.5},
-						{led: 95,  x:-2,  y:-0.5},
-						{led: 98,  x:-2,  y:0.25}
-					],
-					STICK: [
-						{led:0,  x:3,y:2,z:0},
-						{led:25, z:5},
-						{led:49, x:3,y:2,z:0},
-					],
-					JANE: [
-						{led:0,  x:-3,y:0,z:0},
-						{led:49, x:3,y:0,z:0}
-					]
-			}
+  <head>
+    <meta charset="utf-8">
+    <title>Pixel Runner</title>
+    <style media="screen">
+      body {
+        font-family: sans-serif;
+        margin: 0;
+      }
+      form {
+        display: flex;
+        font-weight: 800;
+        padding: .75em;
+        border-bottom: 1px solid #ccc;
+      }
+      form label {
+        flex: auto
+      }
+      form em {
+        font-size: 0.5em;
+        display: block;
+      }
 
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
 
+      iframe {
+        flex-grow: 1;
+        border: none;
+        background: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <label>
+        script
+        <select name="script">
+          <option value="">--</option>
+          <option value="first.html">first demo</option>
+          <option value="webaudio.html">web audio</option>
+          <option value="leap.html">leap motion</option>
+          <option value="layout-debug.html">debug</option>
+        </select>
+      </label>
 
-			const lanterns = new Lanterns(layout)
-			lanterns.connect()
+      <label>
+        layout
+        <select name="layout">
+          <option value="">--</option>
+          <option value="hackspace-1.json">hackspace 1</option>
+          <option value="16-ring.json">neopixel 16</option>
+          <option value="ben.json">bens house</option>
+        </select>
+      </label>
 
+      <label>
+        development
+        <input type="checkbox" checked name="development"/>
+        <em>prevent broadcast to lights</em>
+      </label>
+    </form>
 
-			var scene = new THREE.Scene()
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 )
+    <iframe src="about:blank" id="main"></iframe>
 
-			var renderer = new THREE.WebGLRenderer({ antialias: true })
-			renderer.setSize( window.innerWidth, window.innerHeight )
-			renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setClearColor(0xeeeeee)
-			document.body.appendChild( renderer.domElement )
+    <script type="text/javascript">
+      const qsa = document.querySelectorAll.bind(document)
+      const qs = document.querySelector.bind(document)
 
-			// add lantern meshes to scene
-			const meshes = lanterns.asTHREE()
-			meshes.forEach(mesh => scene.add(mesh))
+      const storage = sessionStorage
 
+      // persist values on load
+      Array.from(qsa('select'))
+        .forEach( input => {
+          const store_key = `select-${input.name}`
 
-			// initially colour the meshes
-			meshes.forEach((mesh, i) => {
-				mesh.material.color.set((0xffffff/meshes.length) * i)
-			})
-			lanterns.writeTHREE(meshes)
+          const initial = storage.getItem(store_key)
+          if(initial !== null) input.value = initial
 
+          input.addEventListener('change', () => {
+            storage.setItem(store_key, input.value)
+          }, false)
+        })
 
-			camera.position.z = 10
+      Array.from(qsa('[type=checkbox]'))
+        .forEach( input => {
+          const store_key = `checkbox-${input.name}`
 
-			var render = function () {
-				requestAnimationFrame( render )
-				renderer.render(scene, camera)
-			}
-			render()
+          const initial = storage.getItem(store_key)
+          if(initial !== null) input.checked = initial == 'true'
 
+          input.addEventListener('change', () => {
+            storage.setItem(store_key, input.checked)
+          }, false)
+        })
 
-      var last_l = 0
-      document.body.addEventListener('mousemove', (e) => {
-        var l = Math.floor((e.clientY/400) * meshes.length)
+      function run() {
+        const data = new FormData(qs('form'))
 
-        if(l !== last_l) {
-					last_l = l
+        const script = data.get('script')
+        const layout = data.get('layout')
 
-          meshes
-            .forEach((lantern, i) => {
-							if(l > i) {
-								lantern.material.color.setHSL((i-l)/meshes.length,.750,.50)
-							} else {
-								lantern.material.color.set(0)
-							}
+        window.development = data.get('development') == 'on'
+
+        if(script && layout) {
+          fetch(`layouts/${layout}`)
+            .then(response => response.json())
+            .then(json => window.layout = json)
+            .then(() => qs('#main').src = `scripts/${script}?${Math.random()}`)
+            .catch(e => {
+              qs('#main').src = `data:text/html,<h3 style="font-family:sans-serif;color:#08f">Couldn't load <br/>${e}`
             })
 
-					lanterns.writeTHREE(meshes)
-
+        } else {
+          qs('#main').src = 'about:blank'
         }
-      })
+      }
+
+
+      Array.from(qsa('input, select'))
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            run()
+          })
+        })
+
+
+    run()
 
 
 
-      controls = new THREE.OrbitControls( camera, renderer.domElement )
-			controls.enableZoom = false
-		</script>
-	</body>
+    </script>
+
+  </body>
 </html>
