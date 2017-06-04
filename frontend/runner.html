@@ -67,7 +67,7 @@
 
     <script type="text/javascript">
       const qsa = document.querySelectorAll.bind(document)
-      const qs = document.querySelectorAll.bind(document)
+      const qs = document.querySelector.bind(document)
 
       const storage = sessionStorage
 
@@ -95,6 +95,40 @@
             storage.setItem(store_key, input.checked)
           }, false)
         })
+
+      function run() {
+        const data = new FormData(qs('form'))
+
+        const script = data.get('script')
+        const layout = data.get('layout')
+
+        window.development = data.get('development') == 'on'
+
+        if(script && layout) {
+          fetch(`layouts/${layout}`)
+            .then(response => response.json())
+            .then(json => window.layout = json)
+            .then(() => qs('#main').src = `scripts/${script}?${Math.random()}`)
+            .catch(e => {
+              qs('#main').src = `data:text/html,<h3 style="font-family:sans-serif;color:#08f">Couldn't load <br/>${e}`
+            })
+
+        } else {
+          qs('#main').src = 'about:blank'
+        }
+      }
+
+
+      Array.from(qsa('input, select'))
+        .forEach(input => {
+          input.addEventListener('change', () => {
+            run()
+          })
+        })
+
+
+    run()
+
 
 
     </script>
