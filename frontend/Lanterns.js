@@ -141,15 +141,15 @@ class Lanterns {
       const time_passed = now - _last
 
       if(time_passed < throttle) {
-        console.log("rescheduling because throttling")
+        // console.log("rescheduling because throttling")
 
         const when = Math.max(throttle - time_passed + 5, 0)
 
-        console.log(`Time passed: ${time_passed}ms, rescheduling in: ${when}ms`)
+        // console.log(`Time passed: ${time_passed}ms, rescheduling in: ${when}ms`)
 
         _scheduled = true
         setTimeout(() => {
-          console.log("unscheduled")
+          // console.log("unscheduled")
           _scheduled = false
           this._send()
         }, when)
@@ -158,7 +158,7 @@ class Lanterns {
       }
 
       if(socket.readyState == WebSocket.OPEN) {
-        console.log("SEND")
+        // console.log("SEND")
         _last = now
         this._datas.forEach(([key, array]) => {
           socket.send(`${key} ${array.join(',')}`)
