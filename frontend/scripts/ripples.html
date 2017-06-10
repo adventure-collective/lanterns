@@ -66,6 +66,7 @@
 			}
 
 			var render = function () {
+			    console.log(ripples)
 			    // check if we should add another ripple
 			    if (rippleCountdown < 0) {
 				    rippleCountdown = ripplesDelay
@@ -80,6 +81,7 @@
                     var opacity = ripple.material.opacity - 0.01
                     ripple.material.opacity = opacity
 					if (opacity <= 0) {
+                        scene.remove(ripple)
                         object.splice(index, 1);
 					}
 
