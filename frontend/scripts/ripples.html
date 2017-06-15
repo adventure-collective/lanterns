@@ -62,11 +62,15 @@
                 rippleToAdd.speed = speed
 				rippleToAdd.material.opacity = 1
                 ripples.push(rippleToAdd)
+
+
+				// comment out this line to see
+				// effect in action
 				scene.add(rippleToAdd)
+				
 			}
 
 			var render = function () {
-			    console.log(ripples)
 			    // check if we should add another ripple
 			    if (rippleCountdown < 0) {
 				    rippleCountdown = ripplesDelay
@@ -84,8 +88,21 @@
                         scene.remove(ripple)
                         object.splice(index, 1);
 					}
-
                 });
+
+
+
+					meshes.forEach(m => {
+						m.material.color.set(0,0,0)
+						ripples.forEach(function(ripple, index, object) {
+							const sphere = new THREE.Sphere(ripple.position, ripple.scale.x * 0.1)
+							if(sphere.containsPoint(m.position)) {
+								m.material.color.lerp(ripple.material.color, ripple.material.opacity)
+							}
+						})
+					})
+
+
 
 			    // ToDo: see what lanterns intersect with ripples and apply their colour
 
