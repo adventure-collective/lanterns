@@ -1,3 +1,5 @@
+print("CHIP_ID" .. string.format('%X', node.chipid()))
+
 -- Check if pins 0 & 1 are shorted, if so enter setup mode
 
 gpio.mode(0, gpio.OUTPUT)
