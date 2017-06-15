@@ -56,7 +56,8 @@
 
 				meshes.forEach((mesh, i) => {
 					const v = simplex.noise4D(mesh.position.x, mesh.position.y, mesh.position.z, t/10000)
-					mesh.material.color.setHSL((Math.sin(v)+1)/2, .5, .5)
+					// console.log(v)
+					mesh.material.color.setHSL((v+1)/2, .5, .5)
 				})
 
 				lanterns.writeTHREE(meshes)

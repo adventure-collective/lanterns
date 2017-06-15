@@ -47,7 +47,7 @@
 
 
 			/*  Ripples bit!  */
-			const ripplesDelay = 100 // the max frames between ripples
+			const ripplesDelay = 50 // the max frames between ripples
 			var rippleCountdown = 0 // the current frames until next ripple
 			const ripples = []
 
@@ -66,8 +66,8 @@
 
 				// comment out this line to see
 				// effect in action
-				scene.add(rippleToAdd)
-				
+				// scene.add(rippleToAdd)
+
 			}
 
 			var render = function () {
@@ -92,19 +92,18 @@
 
 
 
+					// See what lanterns intersect with ripples and apply their colour
 					meshes.forEach(m => {
 						m.material.color.set(0,0,0)
 						ripples.forEach(function(ripple, index, object) {
 							const sphere = new THREE.Sphere(ripple.position, ripple.scale.x * 0.1)
 							if(sphere.containsPoint(m.position)) {
-								m.material.color.lerp(ripple.material.color, ripple.material.opacity)
+								m.material.color.lerp(ripple.material.color, ripple.material.opacity * 2)
 							}
 						})
 					})
 
 
-
-			    // ToDo: see what lanterns intersect with ripples and apply their colour
 
 				requestAnimationFrame( render )
 				renderer.render(scene, camera)

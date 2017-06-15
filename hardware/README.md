@@ -47,7 +47,7 @@ sudo python ./setup.py install
 
 3. connect the esp8266 & put in flash mode
 
-(hold down 'flash', then press 'reset')
+(hold down 'flash', then press 'reset' - the blue light will flash)
 
 4. install firmware
 
@@ -63,4 +63,8 @@ python ./esptool.py --port=/dev/cu.SLAB_USBtoUART  write_flash  -fm=dio -fs=32m 
 
 3. Select /dev/cu.SLAB_USBtoUART,  Set baud rate to 115200, Connect
 
+3.5. Press RST on the nodemcu
+
 4. Click Upload (you can also edit/save files)
+
+5. Select all files in hardware

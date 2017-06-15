@@ -63,7 +63,7 @@
 			// analyser.getByteTimeDomainData(dataArray)
 
 
-			analyser.smoothingTimeConstant = 0.95
+			analyser.smoothingTimeConstant = 0.97
 			var bufferLength = analyser.frequencyBinCount
 			var dataArray = new Uint8Array(bufferLength)
 			analyser.getByteFrequencyData(dataArray)
@@ -100,8 +100,8 @@
 				for (var i = 0; i < dataArray.length; i++) {
 					// ctx.fillStyle = `hsl(${~~(dataArray[i] * 360/255)}, 50%, 50%)`
 					ctx.fillStyle = colour(dataArray[i]/255)
-					ctx.fillRect(i, 0, 1, 300)
-					// ctx.fillRect(i, 0, 1, dataArray[i])
+					// ctx.fillRect(i, 0, 1, 300)
+					ctx.fillRect(i, 0, 1, dataArray[i])
 
 				}
 
@@ -109,7 +109,7 @@
 					const d = mesh.position.distanceTo({x:0, y:2, z:0})
 					const idx = Math.floor((d/max) * dataArray.length)
 					const value = dataArray[idx]
-					const c = colour(value/255)._rgb
+					const c = colour(value/155)._rgb
 
 					mesh.material.color.setRGB(c[0]/255,c[1]/255,c[2]/255)
 					lanterns.writeTHREE(meshes)
@@ -133,6 +133,7 @@
 				var source = audioCtx.createMediaStreamSource(stream);
 				source.connect(analyser)
 
+				console.log("GOT STREAM")
 				console.log(stream, src)
 			  /* use the stream */
 			}).catch(function(err) {

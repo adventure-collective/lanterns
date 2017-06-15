@@ -1,0 +1,12 @@
+H  - ACB4ED
+E  - EEAE00
+L1 - 16D529 (Lilac) -
+L2 - EEB717 (Green)
+O  - 17555E
+R  - ABAA86
+U  - A356BE
+B  - ACBA14 [TESTING ONE]
+Y  - EDEA28
+
+
+ssid: 106F3FDC39D9
