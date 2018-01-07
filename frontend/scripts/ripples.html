@@ -47,26 +47,28 @@
 
 
 			/*  Ripples bit!  */
-			const ripplesDelay = 50 // the max frames between ripples
+			const ripplesDelay = 150 // the max frames between ripples
 			var rippleCountdown = 0 // the current frames until next ripple
 			const ripples = []
 
 			function addRipple(size, speed) {
-                var geometry = new THREE.SphereGeometry( size, 10, 10)
-                var material = new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, transparent: true, opacity: 1 } )
-                var rippleToAdd = new THREE.Mesh( geometry, material )
+	      var geometry = new THREE.SphereGeometry( size, 8, 8)
+	      var material = new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, transparent: true, opacity: 1, wireframe: true } )
+	      var rippleToAdd = new THREE.Mesh( geometry, material )
+				
 				// This is crappy random position based on the assumption that the area is about 2 x 2 x 2
 				rippleToAdd.position.x = Math.random() * 2 - 1
 				rippleToAdd.position.y = Math.random() * 2 - 1
 				rippleToAdd.position.z = Math.random() * 2 - 1
-                rippleToAdd.speed = speed
+        rippleToAdd.speed = speed
 				rippleToAdd.material.opacity = 1
-                ripples.push(rippleToAdd)
+
+        ripples.push(rippleToAdd)
 
 
 				// comment out this line to see
 				// effect in action
-				// scene.add(rippleToAdd)
+				scene.add(rippleToAdd)
 
 			}
 
