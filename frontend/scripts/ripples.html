@@ -51,16 +51,18 @@
 			var rippleCountdown = 0 // the current frames until next ripple
 			const ripples = []
 
-			function addRipple(size, speed) {
-	      var geometry = new THREE.SphereGeometry( size, 8, 8)
+			function addRipple(size) {
+	      var geometry = new THREE.SphereGeometry(size, 8, 8)
 	      var material = new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, transparent: true, opacity: 1, wireframe: true } )
 	      var rippleToAdd = new THREE.Mesh( geometry, material )
-				
+
 				// This is crappy random position based on the assumption that the area is about 2 x 2 x 2
-				rippleToAdd.position.x = Math.random() * 2 - 1
-				rippleToAdd.position.y = Math.random() * 2 - 1
-				rippleToAdd.position.z = Math.random() * 2 - 1
-        rippleToAdd.speed = speed
+
+				const r = ~~(Math.random() * meshes.length-1)
+				const {x, y, z} = meshes[r].position;
+				Object.assign(rippleToAdd.position, {x, y, z})
+
+				rippleToAdd.size = size
 				rippleToAdd.material.opacity = 1
 
         ripples.push(rippleToAdd)
@@ -76,25 +78,30 @@
 			    // check if we should add another ripple
 			    if (rippleCountdown < 0) {
 				    rippleCountdown = ripplesDelay
-                    addRipple(0.1, 0.5)
+
+            addRipple(0.3)
 				}
 				rippleCountdown --
 
 				// loop over each ripple
-                ripples.forEach(function(ripple, index, object) {
+        ripples.forEach(function(ripple, index, object) {
 					var scale = ripple.scale.x
-                    ripple.scale.x = ripple.scale.y = ripple.scale.z = scale + ripple.speed
-                    var opacity = ripple.material.opacity - 0.01
-                    ripple.material.opacity = opacity
-					if (opacity <= 0) {
-                        scene.remove(ripple)
-                        object.splice(index, 1);
+
+					ripple.scale.x = ripple.scale.y = ripple.scale.z = scale * 1.025
+
+					// var opacity = ripple.material.opacity - 0.006
+
+					ripple.material.opacity = (1/(scale*scale));
+
+					if (ripple.material.opacity < 0.01) {
+            scene.remove(ripple)
+            object.splice(index, 1);
 					}
-                });
+        });
 
 
 					const spheres = ripples.map(
-						ripple => new THREE.Sphere(ripple.position, ripple.scale.x * 0.1)
+						ripple => new THREE.Sphere(ripple.position, ripple.scale.x * ripple.size)
 					)
 
 					// See what lanterns intersect with ripples and apply their colour
@@ -102,8 +109,18 @@
 						m.material.color.set(0,0,0)
 						spheres.forEach(function(sphere, index, object) {
 							const ripple = ripples[index];
+
 							if(sphere.containsPoint(m.position)) {
-								m.material.color.lerp(ripple.material.color, ripple.material.opacity * 2)
+
+								const d = sphere.center.distanceTo(m.position) / sphere.radius;
+
+								m.material.color.lerp(
+									ripple.material.color,
+									Math.min(
+										1,
+										ripple.material.opacity * (1-d)
+									)
+								)
 							}
 						})
 					})
