@@ -93,12 +93,15 @@
                 });
 
 
+					const spheres = ripples.map(
+						ripple => new THREE.Sphere(ripple.position, ripple.scale.x * 0.1)
+					)
 
 					// See what lanterns intersect with ripples and apply their colour
 					meshes.forEach(m => {
 						m.material.color.set(0,0,0)
-						ripples.forEach(function(ripple, index, object) {
-							const sphere = new THREE.Sphere(ripple.position, ripple.scale.x * 0.1)
+						spheres.forEach(function(sphere, index, object) {
+							const ripple = ripples[index];
 							if(sphere.containsPoint(m.position)) {
 								m.material.color.lerp(ripple.material.color, ripple.material.opacity * 2)
 							}
