@@ -103,10 +103,10 @@
 						})
 					})
 
-
-
 				requestAnimationFrame( render )
 				renderer.render(scene, camera)
+
+				lanterns.writeTHREE(meshes)
 			}
 			render()
 
