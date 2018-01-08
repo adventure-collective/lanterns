@@ -18,8 +18,8 @@ script:
   - npm install
 
   # hack - support older node versions
-  - buble ./frontend/Lantern.js > ./frontend/Lantern.js
-  - buble ./frontend/test.js > ./frontend/test.js
+  - ./node_modules/.bin/buble ./frontend/Lantern.js > ./frontend/Lantern.js
+  - ./node_modules/.bin/buble ./frontend/test.js > ./frontend/test.js
 
   - npm test
   - cd hardware
