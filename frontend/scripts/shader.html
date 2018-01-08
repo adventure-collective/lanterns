@@ -26,16 +26,72 @@
 
       const sample_stride = 10
 
+
+      var canvas = document.createElement('canvas')
+      document.body.appendChild(canvas)
+
+      var ratio = window.devicePixelRatio || 1
+      canvas.width = window.innerWidth * ratio
+      canvas.height = window.innerHeight * ratio
+      canvas.style.width = '100%'
+
+
+
       // attributes
       // - position on screen
       // - position in real world
 
+
+      // 1. create vertices
+      // 2. map to real positions
+
       const vertices = new Float32Array(
-        lights.length * (2 + 3) * 6
+        ( lights.length + 1 ) * (2 + 3) * 3
       )
 
+      let idx = 0
+
+      // how many units up / across
+      const scaleY = canvas.height / sample_stride
+      const scaleX = canvas.width / sample_stride
+      const screenR = scaleX / scaleY
+      console.log("SACLE", scaleX, scaleY, screenR)
+
+
+      // SCREEN HEIGHT IN METERS
+      const screen_h = 1
+
+
+
+      const screen_w = screen_h * screenR
+      const screen_w_off = -screen_w/2
+
+      // screen
+      vertices[idx++] = 0
+      vertices[idx++] = 0
+      // real
+      vertices[idx++] = 0 + screen_w_off
+      vertices[idx++] = 0
+      vertices[idx++] = 0
+
+      // screen
+      vertices[idx++] = scaleX * 2
+      vertices[idx++] = 0
+      // real
+      vertices[idx++] = (screen_w * 2) + screen_w_off
+      vertices[idx++] = 0
+      vertices[idx++] = 0
+
+      //screen
+      vertices[idx++] = 0
+      vertices[idx++] = scaleY * 2
+      // real
+      vertices[idx++] = screen_w_off
+      vertices[idx++] = screen_h * 2
+      vertices[idx++] = 0
+
+
       lights.forEach((l, i) => {
-        let idx = i * 30;
         const sx = (i % sample_width)
         const sy = (~~(i / sample_width))
         const rx = l.x
@@ -48,7 +104,7 @@
         vertices[idx++] = ry
         vertices[idx++] = rz
 
-        vertices[idx++] = sx + 1
+        vertices[idx++] = sx + 2
         vertices[idx++] = sy
         vertices[idx++] = rx
         vertices[idx++] = ry
@@ -56,46 +112,19 @@
 
 
         vertices[idx++] = sx
-        vertices[idx++] = sy + 1
+        vertices[idx++] = sy + 2
         vertices[idx++] = rx
         vertices[idx++] = ry
         vertices[idx++] = rz
-
-
-
-        vertices[idx++] = sx + 1
-        vertices[idx++] = sy + 1
-        vertices[idx++] = rx
-        vertices[idx++] = ry
-        vertices[idx++] = rz
-
-
-        vertices[idx++] = sx + 1
-        vertices[idx++] = sy
-        vertices[idx++] = rx
-        vertices[idx++] = ry
-        vertices[idx++] = rz
-
-
-        vertices[idx++] = sx
-        vertices[idx++] = sy + 1
-        vertices[idx++] = rx
-        vertices[idx++] = ry
-        vertices[idx++] = rz
-
 
       })
 
 
 
 
-      var canvas = document.createElement('canvas')
-      document.body.appendChild(canvas)
 
-      var ratio = window.devicePixelRatio || 1
-      canvas.width = window.innerWidth * ratio
-      canvas.height = window.innerHeight * ratio
-      canvas.style.width = '100%'
+
+
 
 
       var gl = canvas.getContext("webgl") ||
@@ -140,12 +169,17 @@
         varying vec3 vPosition;
 
         void main () {
+          float d = length(vPosition);
           gl_FragColor = vec4(
-            abs(vPosition.x),
-            abs(vPosition.y),
-            abs(vPosition.z),
+            d,
+            d/5.0,
+            d,
             1.0
           );
+
+          if (d < 1.0) {
+            gl_FragColor = vec4(1.0,0.0,0.5,1.0);
+          }
         }`
       )
 
