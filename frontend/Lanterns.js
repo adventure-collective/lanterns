@@ -60,6 +60,8 @@ class Lanterns {
     })
 
 
+    this._blocked = () => true
+
   }
 
   raw() {
@@ -74,6 +76,9 @@ class Lanterns {
   }
 
   writeArray(array) {
+
+    if(this._blocked()) return
+
     for (var i = 0; i < array.length; i++) {
       this._data[i*3]     = array[i].r
       this._data[i*3 + 1] = array[i].g
@@ -105,6 +110,9 @@ class Lanterns {
   }
 
   writeTHREE(meshes) {
+
+    if(this._blocked()) return
+
     for (var i = 0; i < meshes.length; i++) {
       this._data[i*3]     = meshes[i].material.color.r * 255
       this._data[i*3 + 1] = meshes[i].material.color.g * 255
@@ -132,6 +140,8 @@ class Lanterns {
     const throttle = 50
 
     let _scheduled, _last
+
+    this._blocked = () => _scheduled
 
     this._send = () => {
       if(_scheduled) return
