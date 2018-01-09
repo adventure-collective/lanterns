@@ -24,8 +24,14 @@
 
       const sample_width = Math.ceil(Math.sqrt(lights.length))
 
-      const sample_stride = 10
 
+      // HOW MANY PIXELS WIDE FOR EACH LIGHT
+      const sample_stride = 40
+
+      // SCREEN HEIGHT (METERS)
+      const screen_height = 1
+
+      const HIDE_SCREEN = true
 
       var canvas = document.createElement('canvas')
       document.body.appendChild(canvas)
@@ -36,15 +42,7 @@
       canvas.style.width = '100%'
 
 
-
-      // attributes
-      // - position on screen
-      // - position in real world
-
-
-      // 1. create vertices
-      // 2. map to real positions
-
+      // a triangle for each light + 1 for the screen
       const vertices = new Float32Array(
         ( lights.length + 1 ) * (2 + 3) * 3
       )
@@ -55,15 +53,8 @@
       const scaleY = canvas.height / sample_stride
       const scaleX = canvas.width / sample_stride
       const screenR = scaleX / scaleY
-      console.log("SACLE", scaleX, scaleY, screenR)
 
-
-      // SCREEN HEIGHT IN METERS
-      const screen_h = 1
-
-
-
-      const screen_w = screen_h * screenR
+      const screen_w = screen_height * screenR
       const screen_w_off = -screen_w/2
 
       // screen
@@ -84,10 +75,10 @@
 
       //screen
       vertices[idx++] = 0
-      vertices[idx++] = scaleY * 2
+      vertices[idx++] = scaleY * 2 * (HIDE_SCREEN ? -1 : 1)
       // real
       vertices[idx++] = screen_w_off
-      vertices[idx++] = screen_h * 2
+      vertices[idx++] = screen_height * 2
       vertices[idx++] = 0
 
 
@@ -121,7 +112,52 @@
 
 
 
+      // pixel capture
+      const readPixels = (() => {
 
+        const size = sample_width * sample_stride
+        const pixels = new Uint8Array(size * size * 4);
+        const colours = lights.map(() => ({r:0, g:0, b:0}))
+
+        return gl => {
+
+          if(lanterns._blocked()) return
+
+          gl.readPixels(
+            0, 0,
+            size, size,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            pixels
+          );
+
+          colours.forEach((c, i) => {
+            const x = i % sample_width
+            const y = Math.floor( i  / sample_width )
+
+            const xoff = x * sample_stride;
+            const yoff = y * sample_stride * sample_width * sample_stride;
+
+            const idx = (xoff + yoff) * 4
+
+            c.r = pixels[idx]
+            c.g = pixels[idx + 1]
+            c.b = pixels[idx + 2]
+          })
+
+          // a bit of colour normalisation for the lights
+          colours.forEach(c => {
+            c.r = (c.r/255) * (c.r/255) * (c.r/255) * 255
+            c.g = (c.g/255) * (c.g/255) * (c.g/255) * 255
+            c.b = (c.b/255) * (c.b/255) * (c.b/255) * 255
+          })
+
+
+          lanterns.writeArray(colours)
+
+        }
+
+      })()
 
 
 
@@ -131,6 +167,7 @@
                canvas.getContext("experimental-webgl")
 
       if (!gl) throw new Error("WebGL unavailable")
+
 
       // shader compiler
       function compile(gl, type, source) {
@@ -167,19 +204,18 @@
       var fragmentShader = compile(gl, gl.FRAGMENT_SHADER, `
         precision mediump float;
         varying vec3 vPosition;
+        uniform float t;
 
         void main () {
-          float d = length(vPosition);
+          float d = length(vPosition) * 5.0;
+
           gl_FragColor = vec4(
-            d,
-            d/5.0,
-            d,
+            sin(d + t),
+            cos(d - t),
+            sin(t/2.0),
             1.0
           );
 
-          if (d < 1.0) {
-            gl_FragColor = vec4(1.0,0.0,0.5,1.0);
-          }
         }`
       )
 
@@ -199,6 +235,7 @@
       var aColour = gl.getAttribLocation(program, 'aColour')
       var uFragColor = gl.getUniformLocation(program, 'uFragColor')
       var uScreen = gl.getUniformLocation(program, 'uScreen')
+      var uT = gl.getUniformLocation(program, 't')
 
       gl.uniform4f(uFragColor, 0, .5, 1, .7)
       gl.uniform4f(uFragColor, 0, 0, 1, 1)
@@ -230,48 +267,15 @@
       gl.enableVertexAttribArray(aRealPosition)
 
 
+      const render = (t) => {
+        requestAnimationFrame(render)
+        gl.uniform1f(uT, t/1000)
+        gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 5)
 
-      gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 5)
+        readPixels(gl)
+      }
 
-
-      // pixel capture
-
-      const size = sample_width * sample_stride
-      const pixels = new Uint8Array(size * size * 4);
-      const colours = lights.map(() => ({r:0, g:0, b:0}))
-
-      gl.readPixels(
-        0, 0,
-        size, size,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        pixels
-      );
-
-      colours.forEach((c, i) => {
-        const x = i % sample_width
-        const y = Math.floor( i  / sample_width )
-
-        const xoff = x * sample_stride;
-        const yoff = y * sample_stride * sample_width * sample_stride;
-
-        const idx = (xoff + yoff) * 4
-
-        c.r = pixels[idx]
-        c.g = pixels[idx + 1]
-        c.b = pixels[idx + 2]
-      })
-
-
-      // a bit of colour normalisation for the lights
-      colours.forEach(c => {
-        c.r = (c.r/255) * (c.r/255) * (c.r/255) * 255
-        c.g = (c.g/255) * (c.g/255) * (c.g/255) * 255
-        c.b = (c.b/255) * (c.b/255) * (c.b/255) * 255
-      })
-
-
-      lanterns.writeArray(colours)
+      requestAnimationFrame(render)
 
 
     </script>
