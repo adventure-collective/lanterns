@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Lanterns frontend</title>
+		<style>
+			body { margin: 0; overflow:hidden; }
+			canvas { width: 100%; height: 100% }
+
+			li {
+				width: 1em;
+		    height: 1em;
+		    float: left;
+		    color: #fff;
+		    margin: .3em;
+		    background: #000;
+		    padding: .5em;
+		    border-radius: 100%;
+		    border: #000;
+		    list-style-position: inside;
+			}
+			li:nth-child(4n) {
+				background: red;
+			}
+			li:nth-child(9n) {
+				background: blue;
+			}
+		</style>
+	</head>
+	<body>
+
+		<ol>
+    </ol>
+
+		<script src="../ReconnectingWebSocket.js"></script>
+		<script src="../Lanterns.js"></script>
+		<script>
+
+			// load configuration from runner
+			const layout = window.parent.layout
+			const broadcast = !window.parent.development
+
+
+			const lanterns = new Lanterns(layout)
+
+			if(broadcast) lanterns.connect()
+
+			const lights = lanterns.asArray()
+
+			const ol = document.querySelector('ol')
+
+
+			lights.forEach(l => {
+				const li = document.createElement('li')
+				ol.appendChild(li)
+
+				l.element = li
+			})
+
+			const RE = /rgb\((\d+), (\d+), (\d+)/
+
+			const poll = () => {
+				requestAnimationFrame(poll)
+
+				let changed = false
+				let bg = ''
+				lights.forEach(l => {
+
+					bg = window.getComputedStyle(l.element).background
+
+					if(bg != l.bg) {
+						changed = true
+						l.bg = bg
+
+						const match = bg.match(RE)
+						l.r = parseInt(match[1], 10)
+						l.g = parseInt(match[2], 10)
+						l.b = parseInt(match[3], 10)
+					}
+				})
+
+				if(changed) {
+					console.log("changed")
+					lanterns.writeArray(lights)
+				}
+
+			}
+
+			requestAnimationFrame(poll)
+
+
+
+
+		</script>
+	</body>
+</html>
