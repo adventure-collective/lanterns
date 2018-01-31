@@ -128,6 +128,28 @@ class Lanterns {
 
   }
 
+  writeTHREECorrected(meshes) {
+
+    if(this._blocked()) return
+
+
+    for (var i = 0; i < meshes.length; i++) {
+      const {r,g,b} = meshes[i].material.color;
+      
+      this._data[i*3]     = r * r * r * 255
+      this._data[i*3 + 1] = g * g * g * 255
+      this._data[i*3 + 2] = b * b * b * 255
+    }
+
+    this._writes =
+      this._datas.map(([key, array]) =>
+        key + ' ' + String.fromCharCode.apply(String, array)
+      )
+
+    if(this._send) this._send()
+
+  }
+
 
 
   // untestedish

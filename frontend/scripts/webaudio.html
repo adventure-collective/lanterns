@@ -17,9 +17,18 @@
 		<script src="../Lanterns.js"></script>
 		<script>
 
+			window.addEventListener('keydown', e => {
+				let c;if(~['PageUp', 'p'].indexOf(e.key)) c = 'prev'; if(~['PageDown', 'n'].indexOf(e.key)) c = 'next'; if(c) { window.parent.postMessage( JSON.stringify({ method: c}), '*' ); window.parent.focus() }
+			})
+
+			const settings = function(h,w) {
+				try { return JSON.parse(atob(h.slice(1))) }
+				catch (e) { return w.parent }
+			}(document.location.hash, window)
+
 			// load configuration from runner
-			const layout = window.parent.layout
-			const broadcast = !window.parent.development
+			const layout = settings.layout
+			const broadcast = !settings.development
 
 
 			const lanterns = new Lanterns(layout)
@@ -33,7 +42,7 @@
 			var renderer = new THREE.WebGLRenderer({ antialias: true })
 			renderer.setSize( window.innerWidth, window.innerHeight )
 			renderer.setPixelRatio(window.devicePixelRatio)
-			renderer.setClearColor(0xeeeeee)
+			renderer.setClearColor(settings.dark ? 0 : 0xeeeeee)
 			document.body.appendChild( renderer.domElement )
 
 			// add lantern meshes to scene
@@ -69,14 +78,14 @@
 			analyser.getByteFrequencyData(dataArray)
 
 
-			const canvas = document.createElement('canvas')
-			canvas.width = bufferLength
-			canvas.height = 300
-			Object.assign(canvas.style, {background:'#08f', zIndex: 100000, border: '2px solid blue', height: '200px'})
-
-			const ctx = canvas.getContext('2d')
-
-			document.body.appendChild(canvas)
+			// const canvas = document.createElement('canvas')
+			// canvas.width = bufferLength
+			// canvas.height = 300
+			// Object.assign(canvas.style, {background:'#08f', zIndex: 100000, border: '2px solid blue', height: '200px'})
+      //
+			// const ctx = canvas.getContext('2d')
+      //
+			// document.body.appendChild(canvas)
 
 			const colour = chroma.scale(['#000', '#0f0', 'blue', 'red', '#fff'])
 
@@ -96,14 +105,14 @@
 				// analyser.getByteTimeDomainData(dataArray)
 				analyser.getByteFrequencyData(dataArray)
 
-				ctx.clearRect(0,0,canvas.width, canvas.height)
-				for (var i = 0; i < dataArray.length; i++) {
-					// ctx.fillStyle = `hsl(${~~(dataArray[i] * 360/255)}, 50%, 50%)`
-					ctx.fillStyle = colour(dataArray[i]/255)
-					// ctx.fillRect(i, 0, 1, 300)
-					ctx.fillRect(i, 0, 1, dataArray[i])
-
-				}
+				// ctx.clearRect(0,0,canvas.width, canvas.height)
+				// for (var i = 0; i < dataArray.length; i++) {
+				// 	// ctx.fillStyle = `hsl(${~~(dataArray[i] * 360/255)}, 50%, 50%)`
+				// 	ctx.fillStyle = colour(dataArray[i]/255)
+				// 	// ctx.fillRect(i, 0, 1, 300)
+				// 	ctx.fillRect(i, 0, 1, dataArray[i])
+        //
+				// }
 
 				meshes.forEach(mesh => {
 					const d = mesh.position.distanceTo({x:0, y:2, z:0})

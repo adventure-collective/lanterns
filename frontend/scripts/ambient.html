@@ -4,7 +4,7 @@
 		<meta charset=utf-8>
 		<title>Lanterns frontend</title>
 		<style>
-			body { margin: 0; overflow:hidden; }
+			body { margin: 0; overflow:hidden}
 			canvas { width: 100%; height: 100% }
 		</style>
 	</head>
@@ -13,13 +13,18 @@
 		<script src="../OrbitControls.js"></script>
 		<script src="../ReconnectingWebSocket.js"></script>
 		<script src="../Lanterns.js"></script>
-
 		<script src="../simplex-noise.js"></script>
 		<script>
 
+			const settings = function(h) {
+				try { return JSON.parse(atob(h.slice(1))) }
+				catch (e) { return window.parent }
+			}(document.location.hash)
+
+
 			// load configuration from runner
-			const layout = window.parent.layout
-			const broadcast = !window.parent.development
+			const layout = settings.layout
+			const broadcast = !settings.development
 
 
 			const lanterns = new Lanterns(layout)
@@ -33,7 +38,7 @@
 			var renderer = new THREE.WebGLRenderer({ antialias: true })
 			renderer.setSize( window.innerWidth, window.innerHeight )
 			renderer.setPixelRatio(window.devicePixelRatio)
-			renderer.setClearColor(0xeeeeee)
+			renderer.setClearColor(settings.dark ? 0 : 0xeeeeee)
 			document.body.appendChild( renderer.domElement )
 
 			// add lantern meshes to scene
@@ -57,36 +62,36 @@
 				meshes.forEach((mesh, i) => {
 					const v = simplex.noise4D(mesh.position.x, mesh.position.y, mesh.position.z, t/10000)
 					// console.log(v)
-					mesh.material.color.setHSL((v+1)/2, .5, .5)
+					mesh.material.color.setHSL((v+1)/2, 1, .6)
 				})
 
-				lanterns.writeTHREE(meshes)
+				lanterns.writeTHREECorrected(meshes)
 
 				renderer.render(scene, camera)
 			}
-			render(0)
+			requestAnimationFrame(render)
 
-
-			var last_l = 0
-			document.body.addEventListener('mousemove', (e) => {
-				var l = Math.floor((e.clientY/400) * meshes.length)
-
-				if(l !== last_l) {
-					last_l = l
-
-					meshes
-						.forEach((lantern, i) => {
-							if(l > i) {
-								lantern.material.color.setHSL((i-l)/meshes.length,.750,.50)
-							} else {
-								lantern.material.color.set(0)
-							}
-						})
-
-					lanterns.writeTHREE(meshes)
-
-				}
-			})
+      //
+			// var last_l = 0
+			// document.body.addEventListener('mousemove', (e) => {
+			// 	var l = Math.floor((e.clientY/400) * meshes.length)
+      //
+			// 	if(l !== last_l) {
+			// 		last_l = l
+      //
+			// 		meshes
+			// 			.forEach((lantern, i) => {
+			// 				if(l > i) {
+			// 					lantern.material.color.setHSL((i-l)/meshes.length,.750,.50)
+			// 				} else {
+			// 					lantern.material.color.set(0)
+			// 				}
+			// 			})
+      //
+			// 		lanterns.writeTHREE(meshes)
+      //
+			// 	}
+			// })
 
 			controls = new THREE.OrbitControls( camera, renderer.domElement )
 			controls.enableZoom = false

@@ -13,8 +13,19 @@
 		<script src="../Lanterns.js"></script>
     <script>
 
-			const layout = window.parent.layout
-			const broadcast = !window.parent.development
+
+			window.addEventListener('keydown', e => {
+				let c;if(~['PageUp', 'p'].indexOf(e.key)) c = 'prev'; if(~['PageDown', 'n'].indexOf(e.key)) c = 'next'; if(c) { window.parent.postMessage( JSON.stringify({ method: c}), '*' ); window.parent.focus() }
+			})
+
+			const settings = function(h,w) {
+				try { return JSON.parse(atob(h.slice(1))) }
+				catch (e) { return w.parent }
+			}(document.location.hash, window)
+
+
+			const layout = settings.layout
+			const broadcast = !settings.development
 
 			const lanterns = new Lanterns(layout)
 
@@ -26,18 +37,18 @@
 
 
       // HOW MANY PIXELS WIDE FOR EACH LIGHT
-      const sample_stride = 20
+      const sample_stride = 5
 
       // SCREEN HEIGHT (METERS)
-      const screen_height = 1
+      const screen_height = 2.5
 
 
       var canvas = document.createElement('canvas')
       document.body.appendChild(canvas)
 
       var ratio = window.devicePixelRatio || 1
-      canvas.width = window.innerWidth * ratio
-      canvas.height = window.innerHeight * ratio
+      canvas.width = settings.width || (window.innerWidth * ratio)
+      canvas.height = settings.height || (window.innerHeight * ratio)
       canvas.style.width = '100%'
 
 
@@ -206,12 +217,13 @@
         uniform float t;
 
         void main () {
-          float d = length(vPosition) * 5.0;
+          float d = length(vPosition) * 3.0;
+          float _t = t / 2.0;
 
           gl_FragColor = vec4(
-            sin(d + t),
-            cos(d - t),
-            sin(t/2.0),
+            sin(d + _t),
+            cos(d - _t),
+            sin(_t/2.0),
             1.0
           );
 
